@@ -4382,9 +4382,8 @@ def test_bucket_create_exists():
         response = client.create_bucket(Bucket=bucket_name)
     except ClientError as e:
         status, error_code = _get_status_and_error_code(e.response)
-        print(status,error_code)
-        eq(e.status, 409)
-        eq(e.error_code, 'BucketAlreadyOwnedByYou')
+        eq(status, 409)
+        eq(error_code, 'BucketAlreadyOwnedByYou')
 
 @attr(resource='bucket')
 @attr(method='get')
@@ -9110,8 +9109,8 @@ def test_versioned_concurrent_object_create_and_remove():
 def test_lifecycle_set():
     bucket_name = get_new_bucket()
     client = get_client()
-    rules=[{'ID': 'rule1', 'Expiration': {'Days': 1}, 'Prefix': 'test1/', 'Status':'Enabled'},
-           {'ID': 'rule2', 'Expiration': {'Days': 2}, 'Prefix': 'test2/', 'Status':'Disabled'}]
+    rules=[{'ID': 'rule1', 'Expiration': {'Days': 1}, 'Filter': {'Prefix': 'test1/'}, 'Status':'Enabled'},
+           {'ID': 'rule2', 'Expiration': {'Days': 2}, 'Filter': {'Prefix': 'test2/'}, 'Status':'Disabled'}]
     lifecycle = {'Rules': rules}
     response = client.put_bucket_lifecycle_configuration(Bucket=bucket_name, LifecycleConfiguration=lifecycle)
     eq(response['ResponseMetadata']['HTTPStatusCode'], 200)
